@@ -55,11 +55,11 @@ body.light .display {
 .buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 8px;
 }
 
 button {
-  height: 40px;
+  height: 20px;
   font-size: 1.5rem;
   border: none;
   border-radius: 15px;
