@@ -28,10 +28,21 @@ function updateHistory() {
 
   localStorage.setItem('calcHistory', JSON.stringify(history));
 }
+updateHistory(); // Initial history load
+
+//  Load saved theme
+if (localStorage.getItem('calcTheme') === 'light') {
+  document.body.classList.add('light');
+  themeToggle.textContent = "🌑 Switch Theme";
+}
 
 //  Calculate Expression
 function calculate() {
   try {
+    // Prevent eval of empty string or just operators
+    if (!currentInput || isNaN(currentInput[currentInput.length - 1])) {
+      return;
+    }
     const result = eval(currentInput).toString();
     history.push(`${currentInput} = ${result}`);
     currentInput = result;
@@ -47,7 +58,6 @@ function calculate() {
 buttons.forEach(button => {
   button.addEventListener('click', () => {
     const value = button.textContent;
-
     if (value === '=') {
       calculate();
     } else if (value === 'C') {
@@ -68,6 +78,7 @@ document.addEventListener('keydown', (e) => {
     if (currentInput === 'Error') currentInput = '';
     currentInput += e.key;
   } else if (e.key === 'Enter') {
+    e.preventDefault(); // Prevent form submission if calculator is in a form
     calculate();
   } else if (e.key === 'Backspace') {
     currentInput = currentInput.slice(0, -1);
@@ -86,19 +97,10 @@ themeToggle.addEventListener('click', () => {
   localStorage.setItem('calcTheme', document.body.classList.contains('light') ? "light" : "dark");
 });
 
-// Clear history
+// Clear history with confirmation
 clearHistoryBtn.addEventListener('click', () => {
-  history = [];
-  updateHistory();
-  currentInput = '';
-  updateDisplay();
+  if (confirm("Are you sure you want to clear all history?")) {
+    history = [];
+    updateHistory();
+  }
 });
-
-// Load history + theme on startup
-updateHistory();
-if (localStorage.getItem('calcTheme') === "light") {
-  document.body.classList.add("light");
-  themeToggle.textContent = "🌑 Switch Theme";
-} else {
-  themeToggle.textContent = "🌙 Switch Theme";
-}
